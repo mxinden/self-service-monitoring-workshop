@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: sample-app
+  annotations:
+    nginx.ingress.kubernetes.io/load-balancer: "ip_hash"
+spec:
+  rules:
+  - host: sample-app.minikube.info
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: sample-app
+          servicePort: 8080
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-and-alertmanager
+  namespace: monitoring
+  annotations:
+    nginx.ingress.kubernetes.io/load-balancer: "ip_hash"
+spec:
+  rules:
+  - host: prometheus.minikube.info
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-k8s
+          servicePort: 9090
+  - host: alertmanager.minikube.info
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: alertmanager-main
+          servicePort: 9093

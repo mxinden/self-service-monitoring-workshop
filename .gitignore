@@ -1,0 +1,3 @@
+kube-prometheus/vendor
+sample-app/.docker-image
+sample-app/sample-app
