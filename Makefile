@@ -6,9 +6,9 @@ JB_BINARY:=$(GOPATH)/bin/jb
 all: kube-prometheus/manifests sample-app/.docker-image
 
 sample-app/sample-app: sample-app/main.go
-	go build -o sample-app/sample-app sample-app/main.go
+	GO111MODULE=on go build -o sample-app/sample-app sample-app/main.go
 
-sample-app/.docker-image: sample-app/sample-app
+sample-app/.docker-image: sample-app/sample-app sample-app/VERSION
 	docker build -t quay.io/mxinden/self-service-monitoring-sample-app:v$(shell cat sample-app/VERSION) -f sample-app/Dockerfile/ sample-app
 	touch $@
 

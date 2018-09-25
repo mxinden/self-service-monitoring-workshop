@@ -22,6 +22,7 @@ self-service monitoring in their own Kubernetes infrastructure.
         - [Prerequisites](#prerequisites)
         - [Setup environment](#setup-environment)
     - [1. Explore default black box monitoring](#1-explore-default-black-box-monitoring)
+    - [2. Instrument application](#2-instrument-application)
 
 <!-- markdown-toc end -->
 
@@ -113,3 +114,38 @@ self-service monitoring in their own Kubernetes infrastructure.
     `curl localhost:8080/hello-universe`
 
 9. Compare CPU usage (see 4)
+
+
+## 2. Instrument application
+
+1. Deploy *sample-app* version 2.0.0 and its *ServiceMonitor*
+
+    `kubectl apply -f sample-app/manifests`
+
+2. Expose *sample-app* service
+
+    `kubectl port-forward svc/sample-app 8080`
+
+3. Query `/hello-world` or `/hello-universe` endpoint
+
+    `curl localhost:8080/hello-universe`
+
+4. Expose Prometheus UI
+
+    `kubectl port-forward -n monitoring prometheus-k8s-0 9090`
+
+5. Go to `localhost:9090` in your browser
+
+6. Explore new `sample_app_api_requests_total` metric
+
+7. Query `/hello-world` or `/hello-universe` endpoint
+
+    `curl localhost:8080/hello-universe`
+
+8. Expose Prometheus UI
+
+    `kubectl port-forward -n monitoring prometheus-k8s-0 9090`
+
+9. Go to `localhost:9090` in your browser
+
+10. Explore new `sample_app_api_requests_total` metric

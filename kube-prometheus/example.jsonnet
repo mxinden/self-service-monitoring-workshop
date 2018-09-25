@@ -14,6 +14,7 @@ local kp = (import 'kube-prometheus/kube-prometheus.libsonnet') + {
         evaluationInterval: "1s",
         scrapeInterval: "1s",
         replicas: 1,
+        ruleNamespaceSelector: {},
       },
     },
   },

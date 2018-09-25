@@ -6,11 +6,30 @@ import (
 	"net/http"
 	"runtime"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
-	http.HandleFunc("/hello-world", handleWorldRequest)
-	http.HandleFunc("/hello-universe", handleUniverseRequest)
+	counter := prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "sample_app_api_requests_total",
+			Help: "A counter for requests to the wrapped handler.",
+		},
+		[]string{"code", "method"},
+	)
+
+	// TODO: Don't use global registry
+	prometheus.MustRegister(counter)
+
+	worldInstrumented := promhttp.InstrumentHandlerCounter(counter, http.HandlerFunc(handleWorldRequest))
+	universeIntrumented := promhttp.InstrumentHandlerCounter(counter, http.HandlerFunc(handleUniverseRequest))
+
+	http.HandleFunc("/hello-world", worldInstrumented)
+	http.HandleFunc("/hello-universe", universeIntrumented)
+	http.Handle("/metrics", promhttp.Handler())
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
