@@ -24,9 +24,11 @@ func main() {
 	prometheus.MustRegister(counter)
 
 	worldInstrumented := promhttp.InstrumentHandlerCounter(counter, http.HandlerFunc(handleWorldRequest))
+	faultyWorldIntrumented := promhttp.InstrumentHandlerCounter(counter, http.HandlerFunc(handleFaultyWorldRequest))
 	universeIntrumented := promhttp.InstrumentHandlerCounter(counter, http.HandlerFunc(handleUniverseRequest))
 
 	http.HandleFunc("/hello-world", worldInstrumented)
+	http.HandleFunc("/hello-faulty-world", faultyWorldIntrumented)
 	http.HandleFunc("/hello-universe", universeIntrumented)
 	http.Handle("/metrics", promhttp.Handler())
 
@@ -35,6 +37,10 @@ func main() {
 
 func handleWorldRequest(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "Hello, world!\n")
+}
+
+func handleFaultyWorldRequest(w http.ResponseWriter, req *http.Request) {
+	w.WriteHeader(http.StatusInternalServerError)
 }
 
 func handleUniverseRequest(w http.ResponseWriter, req *http.Request) {

@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: k8s
+    role: alert-rules
+  name: sample-app-rules
+spec:
+  groups:
+  - name: k8s.rules
+    rules:
+    - alert: SampleAppErrors
+      expr: |
+        (sum(rate(sample_app_api_requests_total{code!~"2.."}[5m])) by (job)
+          /
+          sum(rate(sample_app_api_requests_total[5m])) by (job))
+        * 100 > 1
+      for: 1m
+      annotations:
+        message: Sample app '{{ $labels.job }}' is experiencing {{ printf \"%0.0f\" $value }}% errors.',
+      labels:
+        severity: warning

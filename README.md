@@ -23,6 +23,7 @@ self-service monitoring in their own Kubernetes infrastructure.
         - [Setup environment](#setup-environment)
     - [1. Explore default black box monitoring](#1-explore-default-black-box-monitoring)
     - [2. Instrument application](#2-instrument-application)
+    - [3. Setup alerting](#3-setup-alerting)
 
 <!-- markdown-toc end -->
 
@@ -149,3 +150,34 @@ self-service monitoring in their own Kubernetes infrastructure.
 9. Go to `localhost:9090` in your browser
 
 10. Explore new `sample_app_api_requests_total` metric
+
+
+## 3. Setup alerting
+
+1. Deploy *sample-app* version 3.0.0 and its *PrometheusRule*
+
+    `kubectl apply -f sample-app/manifests`
+
+2. Expose *sample-app* service
+
+    `kubectl port-forward svc/sample-app 8080`
+
+3. Query faulty `/hello-faulty-world` endpoint
+
+    `curl localhost:8080/hello-universe`
+
+4. Expose Prometheus UI
+
+    `kubectl port-forward -n monitoring prometheus-k8s-0 9090`
+
+5. Go to `localhost:9090` in your browser
+
+6. Explore new `sample_app_api_requests_total` metric
+
+7. Look at the alerts that Prometheus is firing on `localhost:9090/alerts`
+
+8. Expose Alertmanager UI
+
+    `kubectl port-forward -n monitoring alertmanager-main-0 9093`
+
+9. Look at the alerts that Alertmanager is receiving on `localhost:9093`

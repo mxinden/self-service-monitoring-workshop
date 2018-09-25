@@ -15,7 +15,7 @@ spec:
         app: sample-app
     spec:
       containers:
-      - image: quay.io/mxinden/self-service-monitoring-sample-app:v2.0.0
+      - image: quay.io/mxinden/self-service-monitoring-sample-app:v3.0.0
         name: sample-app
         ports:
         - containerPort: 8080
